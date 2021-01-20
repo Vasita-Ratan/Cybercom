@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<link rel="stylesheet" type="text/css" href="style6.css">
+	<script type="text/javascript">
+		function validate()
+		{		
+			var txt1 = document.getElementById("username");
+			if(txt1 == "")
+			{
+				alert("Yplease add recod !");
+			}
+			else{
+				alert("Your request has been submitted !");
+			}
+	</script>
+</head>
+<body >
+<form align="center" onsubmit="validate()">
+	  <h2>Contact US</h2>
+ <div class="inputWithIcon">
+  <input type="text" placeholder="Your name" id="username">
+  <i class="fa fa-user fa-lg fa-fw" aria-hidden="true"></i>
+</div>
+
+<div class="inputWithIcon">
+  <input type="text" placeholder="Email">
+  <i class="fa fa-envelope fa-lg fa-fw" aria-hidden="true"></i>
+</div>
+
+<div class="inputWithIcon">
+  <input type="text" placeholder="Phone Number">
+  <i class="fa fa-phone fa-lg fa-fw" aria-hidden="true"></i>
+</div>
+<div class="inputWithIcon inputIconBg">
+  <textarea name="text" placeholder="comment here!" width="100px" height="200px"></textarea>
+  <i class="fa fa-phone fa-lg fa-fw" aria-hidden="true"></i>
+</div>
+	<button type="Submit" class="btn btn-success" value="Submit" onclick="validate()")>Submit</button>
+</form>
+</body>
+</html>
+
