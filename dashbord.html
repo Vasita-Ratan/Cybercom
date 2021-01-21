@@ -1,9 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	
+	<link rel="stylesheet" type="text/css" href="dashbord.css">
 </head>
 <body>
-		<h1>login Sucessfull</h1>
+
+		<div class="slidebar" onclick="togglemenu()">
+			<div class="toggle-btn">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+			<ul>
+				<li>Dashbord</li>
+				<li>users</li>
+				<li>login session</li>
+				<li>logout</li>
+			</ul>
+
+		<form id="form" name="form" onsubmit="event.preventDefault();onFormSubmit();">
+
+			<input type="text" name="name" id="name" placeholder="Enter name:-"><br><br>
+			<input type="text" name="Email" id="Email" placeholder="Enter Email:-"><br><br>
+			<input type="Password" name="Password" id="Password" placeholder="Enter Password:-"><br><br>
+			<input type="date" name="Birthdate" id="Birthdate" placeholder="Enter date:-"><br>
+			<input type="text" name="age" id="age" placeholder="Enter age:-"><br>
+			<button onclick="adduser();" align="center">Add User</button><br><br>
+			<table border="2" align="center" id="tbl ">
+				<tr bgcolor="#999966">
+					<th>Name</th>
+					<th>Email</th>
+					<th>Password</th>
+					<th>Birthdate</th>
+					<th>Age</th>
+					<th>Action</th>
+				</tr>
+
+			<tr>
+				<td>vasita ratan</td>
+				<td>vasitaratan123@gmai.com</td>
+				<td>9898361031</td>
+				<td>20/12/1999</td>
+				<td>22</td>
+				<td><a href="Edit">Edit</a>/<a href="Delete">Delete</a></td>
+			</tr>
+
+			<tr>
+				<td>vasita sumit</td>
+				<td>vasitasumit123@gmai.com</td>
+				<td>9898361030</td>
+				<td>23/09/1998</td>
+				<td>21</td>
+				<td><a href="Edit">Edit</a>/<a href="Delete">Delete</a></td>
+			</tr>
+
+			<tr>
+				<td>vasita karan</td>
+				<td>vasitakaran123@gmai.com</td>
+				<td>9898361121</td>
+				<td>23/05/2002</td>
+				<td>19</td>
+				<td><a href="Edit">Edit</a>/<a href="Delete">Delete</a></td>
+			</tr>
+			<tr>
+				<td>patel meet</td>
+				<td>meet123@gmai.com</td>
+				<td>97323263</td>
+				<td>11/12/2000</td>
+				<td>20</td>
+				<td><a href="Edit">Edit</a>/<a href="Delete">Delete</a></td>
+			</tr>
+			</table>
+		</form>
+		</div>	
+
+		<script type="text/javascript">
+			
+		function adduser()
+		{
+			var name = document.getElementById('name').value;
+			var Email = document.getElementById('Email').value;
+			var Password = document.getElementById('Password').value;
+			var Birthdate = document.getElementById('Birthdate').value;
+			var age = document.getElementById ('age').value;
+
+			var table = document.getElementByIdTagname('tbl')[0];
+
+			var newrow = table.insertRow(1);
+
+			var td1 = newrow.insertCell(0);
+			var td2 = newrow.insertCell(1);
+			var td3 = newrow.insertCell(2);
+			var td4 = newrow.insertCell(3);
+			var td5 = newrow.insertCell(4);
+
+
+			td1.innerHTML=name;
+			td2.innerHTML=Email;
+			td3.innerHTML=Password;
+			td4=innerHTML=Birthdate;
+			td5=innerHTML=age;
+
+			alert('record inserted');
+
+		}
+			/*function togglemenu(){
+
+				document.getElementById('slidebar').classList.toggle(active);
+			}*/
+		</script>
 </body>
 </html>
