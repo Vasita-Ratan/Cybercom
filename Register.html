@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<Html>  
+<head>   
+<title>  
+		Registration Page  
+		<link rel="stylesheet" href="./Register.css">
+</title>  
+</head>  
+<body bgcolor="Lightskyblue">  
+<br>  
+<br>  
+		<div class="login-page">
+		<div class="form">
+
+		<center>Registration Page</center><br>
+		<form action= "login.html" method="post" class="form" id="form" align = "center">       
+		<input type="text" name="name" id="name" align="center" placeholder="Enter name:-"/> <br> <br>    
+		<input type="text" name="Email" id="Email" align="center" placeholder="Enter Email:-"/> <br> <br>    
+		<input type="password" name="password" id="password" align="center" placeholder="Enter Password" /> <br> <br>    
+		<input type="password" name="conformpassword" align="center" id= "conformpassword" placeholder="Re-Enter password"/> <br> <br>      
+		<select>  
+		<option value="Select City">Select City</option>  
+		<option value="Ahmedabad">Ahmedabad</option>  
+		<option value="Surat">Surat</option>  
+		<option value="Jamanagar">Jamanagar</option>  
+		<option value="Vadodara">Vadodara</option>  
+		<option value="Kheda">Kheda</option>  
+		<option value="Mahesana">Mahesana</option>  
+		</select><br><br>
+
+		<select>  
+		<option value="Select State" size="15">Select State</option>  
+		<option value="Gujarat">Gujarat</option>  
+		<option value="Rajsthan">Rajsthan</option>  
+		<option value="Mp">Mp</option>  
+		<option value="Up">Up</option>  
+		<option value="Mumbai">Mumbai</option>  
+		<option value="Delhi">Delhi</option>  
+		</select> <br>
+
+		<input type="checkbox" name="field name" value="Initial value"> <label>Terms & Conditions</label><br><br>
+
+		<input type="submit" name="submit" value="Register">
+
+
+		<br>  
+		</form>
+		</div>
+		</div>  
+		<script type="text/javascript">
+			
+			const name = document.getElemenetById('name');
+			const Email = document.getElemenetById('Email');
+			const password = document.getElemenetById('password');
+			const conformpassword = document.getElemenetById('conformpassword');
+			const Select City = document.getElemenetById('Select City');
+			const Select State = document.getElemenetById('Select State');
+		//addevent 
+		form.addEventListener('submit',(event) =>
+		{
+			event.preventDefault();
+			validate();
+
+
+		})
+		//fetching the value of fields
+		const validate = () =>{
+			const nameval = name.value.trim();
+			const Emailval = Email.value.trim();
+			const passwordval = password.value.trim();
+			const conformpasswordval =conformpassword.value.trim();
+			const Select Cityval =Select City.value.trim();
+			const Select Stateval = Select State.value.trim();
+		}
+
+		</script>
+</body>  
+</html>  
