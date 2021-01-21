@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LOGIN page</title>
+	<link rel="stylesheet" href="./login.css">
+</head>
+<body background="blue">		
+
+		<div class="login-page">
+		<div class="form">
+			<center>Login Page</center><br>
+			<form class="form" id="form" action="Register.html" method="post" align="center" onsubmit="return validate()">
+
+				<input type="text" name="Email" id="Email" placeholder="Enter Email:-" >
+				<div id="Email_error">please fill Email</div>
+				<br><br>
+				<input type="password" name="password" id="password" placeholder="Enter password">
+				<div id="password_error">please fill password</div>
+				<br><br>
+				<button type="submit" name = "submit" value="login" align="center">Login</button><br><br>
+				<button type="register" name="register" value="Register" align="center" onclick="Register.html()">Register</button>
+				
+			</form>
+		</div>
+		</div>
+		<script src="login.js"></script>
+		</script>
+</body>
+</html>
