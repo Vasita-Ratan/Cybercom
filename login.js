@@ -17,7 +17,7 @@ function validate() {
 		}
 
 	// body...
-	if(Email == vasitaratan123@gmail.com && password == 9898361031)
+	if(Email == Emailval && password == passwordval)
 	{
 		alert("login sucessfull");
 		return true;
