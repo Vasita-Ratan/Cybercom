@@ -1,0 +1,40 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+#slidebar{
+	position: fixed;
+	width: 30%;
+	height: 100%;
+	background-color: orange;
+}
+
+#slidebar li{
+
+	color: white;
+	font-size: 30px;
+	padding:30px;
+	border-bottom:1px solid gray;
+}
+
+.toggle-btn{
+
+	position: absolute;
+	left:120px;
+	top:15px;
+
+}
+
+.toggle-btn span{
+
+	display: block;
+	color: yellow;
+	width: 30px;
+	height: 5;
+}
+
+#slidebar.active{
+
+	left: 0;
+}
