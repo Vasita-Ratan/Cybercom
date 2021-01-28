@@ -1,6 +1,6 @@
 <?php
 
-$script_name = $_SERVER['SCRIPT_NAME'];
+$script_name = $_SERVER['SCRIPT_NAME'];//redirect to the submiting the data into anotherpage.php file
 
 
 ?>	
