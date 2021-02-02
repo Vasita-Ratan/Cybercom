@@ -1,25 +1,59 @@
-
 <?php
-	/*
-	$email = 'vasitaratan123@gmail.com';
-	$password = 'Ratan123@gmail.com';
 
-	if(isset($_POST['email']) && isset($_POST['password']))
-	{
-		$email = $_POST['email'];
-		$password = $_POST['password'];
+   session_start();
 
-		if(!empty($email) && !empty($password))
-		{
-			echo "your are sigin in";
-		}
-		else
-		{
-			echo "please try again latter!!!";
-		}
-	}
-	*/
+   if(isset($_POST['submit']))
+   {
 
+      include 'Dbconn.php';
+
+      $email = mysql_real_escape_string($conn, $_POST['email']);
+      $password = mysql_real_escape_string( $conn,$_POST['password']);
+     
+
+      $password = password_hash($password, PASSWORD_BCRYPT);
+
+      $query = "select * from SignIn";
+
+      $query_run = @mysqli_query($conn,$query);
+
+      $count = @mysqli_num_rows($query_run);
+
+      if($count>0)
+      {
+         echo "Record exists";
+
+      }
+      else
+      {
+         if($password == $password)
+         {
+            $insert_query = "insert into SignIn(`email`,`password`) values($email,$password)";
+
+            $insertq = @mysqli_query($conn,$insert_query);
+            if($insertq)
+            {
+                ?>
+                  <script>
+                      alert("connection sucessfull");
+                   </script>
+              <?php
+            }
+            else
+             {
+                  ?>
+                   <script>
+                      alert("connection unsucessfull");
+                   </script>
+                   <?php
+               }
+
+         }
+         echo "Doesn't Exists";
+      }
+
+   
+   }
 ?>
 
 

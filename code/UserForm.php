@@ -1,26 +1,68 @@
 <?php
-   
-      $name = $_POST['name'];
-      $password = $_POST['password'];
-      $Address = $_POST['Address'];
-      $checkbox = $_POST['checkbox'];
-      $gender = $_POST['gender'];
 
-      if(true)
+   session_start();
+
+   if(isset($_POST['submit']))
+   {
+
+      include 'Dbconn.php';
+
+      $name = mysql_real_escape_string($conn, $_POST['name']);
+      $password = mysql_real_escape_string( $conn,$_POST['password']);
+      $Address = mysql_real_escape_string($conn,$_POST['Address']);
+      $Hobby = mysql_real_escape_string($conn,$_POST['Hobby']);
+      $gender = mysql_real_escape_string($conn,$_POST['gender']);
+      $file = mysql_real_escape_string($conn,$_POST['file('name.txt')']);
+
+      $password = password_hash($password, PASSWORD_BCRYPT);
+
+      $query = "select * from Usertb";
+
+      $query_run = @mysqli_query($conn,$query);
+
+      $count = @mysqli_num_rows($query_run);
+
+      if($count>0)
       {
-         $filename = 'name.txt'
-         echo "Username:-".$name.'<br>'."password:-  ".$password.'<br>'."Address:- ".$Address.'<br>'."Game:- ".$checkbox.'<br>'."gender:- ".$gender.'<br>'."file is:- ".$filename;
+         echo "Record exists";
+
+      }
+      else
+      {
+         if($password == $password)
+         {
+            $insert_query = "insert into Usertb(`name`,`password`,`Address`,`Hobby`,`gender`,`file`) values($name,$password,$Address,$Hobby,$gender,$file)";
+
+            $insertq = @mysqli_query($conn,$insert_query);
+            if($insertq)
+            {
+                ?>
+                  <script>
+                      alert("connection sucessfull");
+                   </script>
+              <?php
+            }
+            else
+             {
+                  ?>
+                   <script>
+                      alert("connection unsucessfull");
+                   </script>
+                   <?php
+               }
+
+         }
+         echo "Doesn't Exists";
       }
 
-
    
-
-
+   }
 ?>
+
 <html>
    
    <head>
-      <title>UserForm</title>
+      <title>PHP UserForm</title>
    </head>
    
    <body>
@@ -45,9 +87,9 @@
             
             <tr>
                <td>Select Game:-</td>
-               <td><input type="checkbox" name="checkbox" value="Hockey">Hockey</input><br>
-                 <input type="checkbox" name="checkbox" value="Football">Football</input><br>
-                   <input type="checkbox" name="checkbox" value="Cricket">Cricket</input></td>
+               <td><input type="checkbox" name="Hobby" value="Hockey">Hockey</input><br>
+                 <input type="checkbox" name="Hobby" value="Football">Football</input><br>
+                   <input type="checkbox" name="Hobby" value="Cricket">Cricket</input></td>
             </tr>
             <tr>
                <td>Gender:-</td>

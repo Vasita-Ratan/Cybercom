@@ -1,36 +1,59 @@
 <?php
 
-	if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['subject']) && isset($_POST['message']))
-	{
-		$name = $_POST['name'];
-		$email = $_POST['email'];
-		$subject = $_POST['subject'];
-		$message = $_POST['message'];
+   session_start();
 
-		if(!empty($name) && !empty($email) && !empty($subject) && !empty($message)) {
+   if(isset($_POST['submit']))
+   {
 
-				$to = 'sumitrajput000444@gmail.com';
-				$subject = 'simple email';
-				$body = $user_name."\n\n".$contact_text;
-				$headers = 'From: '.$contact_email;
+      include 'Dbconn.php';
+      
+      $name = mysql_real_escape_string($conn, $_POST['name']);
+      $email = mysql_real_escape_string( $conn,$_POST['email']);
+       $subject = mysql_real_escape_string($conn,$_POST['subject']);
+      $message = mysql_real_escape_string($conn,$_POST['message']);
+     
+      $query = "select * from ContactUs";
 
-				if(@mail($to, $subject, $body, $headers))
-				{
+      $query_run = @mysqli_query($conn,$query);
 
-					echo "Thank you for conacting us.";
-				}
-				else
-				{
-					echo "sorry some error occured on it ";
-				}
-			}
-			else
-			{
-				echo "please fill all feilds";
-			}
+      $count = @mysqli_num_rows($query_run);
 
+      if($count>0)
+      {
+         echo "Record exists";
+
+      }
+      else
+      {
+         if($email == $email)
+         {
+            $insert_query = "insert into ContactUs(`name`,`email`,`subject`,`message`) values($name,$email,$subject,$message)";
+
+            $insertq = @mysqli_query($conn,$insert_query);
+            if($insertq)
+            {
+                ?>
+                  <script>
+                      alert("connection sucessfull");
+                   </script>
+              <?php
+            }
+            else
+             {
+                  ?>
+                   <script>
+                      alert("connection unsucessfull");
+                   </script>
+                   <?php
+               }
+
+         }
+         echo "Doesn't Exists";
+      }
+
+   
+   }
 ?>
-
 
 <form action="ContactUs.php" method="POST"> 
 	
