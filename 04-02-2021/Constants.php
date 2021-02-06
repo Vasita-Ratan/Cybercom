@@ -6,7 +6,7 @@ class Circle
 
 	public function area($redius)
 	{
-		return self::pi * ($redius*$redius); 
+		return self::pi * ($redius*$redius); //when get error use self:: on this
 	}
 }
 
