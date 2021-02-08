@@ -1,11 +1,11 @@
-<?php
 
    session_start();
 
    if(isset($_POST['submit']))
    {
 
-      include 'Dbconn.php';
+      include 'Dbconn.php';<?php
+
       
       $fname = mysql_real_escape_string($conn, $_POST['fname']);
       $lname = mysql_real_escape_string( $conn,$_POST['lname']);

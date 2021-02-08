@@ -6,17 +6,17 @@
    {
 
       include 'Dbconn.php';
-
-      $name = mysql_real_escape_string($conn, $_POST['name']);
+      $filename = 'name.txt';
+      $name = mysqli_real_escape_string($conn, $_POST['name']);
       $password = mysql_real_escape_string( $conn,$_POST['password']);
       $Address = mysql_real_escape_string($conn,$_POST['Address']);
       $Hobby = mysql_real_escape_string($conn,$_POST['Hobby']);
       $gender = mysql_real_escape_string($conn,$_POST['gender']);
-      $file = mysql_real_escape_string($conn,$_POST['file('name.txt')']);
+      $file = mysql_real_escape_string($conn,$_POST[$filename]);
 
       $password = password_hash($password, PASSWORD_BCRYPT);
 
-      $query = "select * from Usertb";
+      $query = "select * from User_tbl";
 
       $query_run = @mysqli_query($conn,$query);
 
@@ -31,7 +31,7 @@
       {
          if($password == $password)
          {
-            $insert_query = "insert into Usertb(`name`,`password`,`Address`,`Hobby`,`gender`,`file`) values($name,$password,$Address,$Hobby,$gender,$file)";
+            $insert_query = "insert into User_tbl(`name`,`password`,`Address`,`Hobby`,`gender`,`file`) values($name,$password,$Address,$Hobby,$gender,$file)";
 
             $insertq = @mysqli_query($conn,$insert_query);
             if($insertq)

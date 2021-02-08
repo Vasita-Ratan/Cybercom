@@ -4,27 +4,19 @@ $mysql_error = 'could not connect';
 $mysql_host = 'localhost';
 $mysql_user = 'root';
 $mysql_pass = '';
-$mysql_db = 'employee';
+$mysql_db = 'training';
 
-$conn = @mysql_connect($mysql_host,$mysql_user,$mysql_pass) or die($mysql_error); 
-
-
-if($conn)
+$conn = @mysqli_connect($mysql_host,$mysql_user,$mysql_pass) or die($mysql_error); 
+/*
+if($conn == true)
 {
-	?>
-	<script>
-		alert("connection sucessfull");
-	</script>
-	<?php
+	echo "connected";
 }
 else
 {
-	?>
-	<script>
-		alert("connection unsucessfull");
-	</script>
-	<?php
+	echo "not connected";	
 }
 
+*/
 
 ?>
