@@ -1,115 +1,77 @@
-<?php 
+<?php $category = $this->getCategory();?>
+<?php $categoryOptions = $this->getCategoryOptions();?>
+<div class="container">
+	<div class="card text-left">
+		<div class="card-body">
+			<h4 class="card-title"></h4>
+			<form action="<?php echo $this->getUrl()->getUrl('save');?>" method="post">
+				<fieldset>
+					<legend>
+						<?php if ($this->getRequest()->getGet('id')) { ?>
+							<p class="h2 text-center">Update Category Details</p><br>
+						<?php } else { ?>
+							<p class="h2 text-center">Add Category Details</p><br>
+						<?php } ?>
+					</legend>
 
-    $categoryOptions = $this->getCategoryOptions();
- ?>
-<?php
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label for="parentId">PARENT ID</label>
+							<select class="form-control" id="parentId" name="category[parentId]">
+								<?php if ($categoryOptions) : ?>
+									
+									<?php foreach ($categoryOptions as $categoryId => $name) : ?>
+										<option value="<?php echo $categoryId ?>" <?php echo ($categoryId == $category->parentId) ? 'selected' : ""; ?>><?php echo $name; ?></option>
+									<?php endforeach; ?>
+								
+							
+								
+								<?php endif; ?>
 
-  $categories = $this->getCategory();
-  $statusOption = [0 => 'Enabled', 1 => 'Disabled'];
-  
-    
-?>
-<style>
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
+							</select>
+						</div>
 
-input[type=text], select, textarea {
-  width: 20%;
-  padding: 4px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  box-sizing: border-box;
-  margin-top: 0px;
-  margin-bottom: 6px;
-  resize: vertical;
-}
+						<div class="form-group col-md-12">
+							<label for="name">NAME</label>
+							<input id="name" name="category[name]" value="<?php echo $category->name ?>" type="text" placeholder="CATEGORY NAME" class="validate form-control" require>
+						</div>
 
-input[type=submit] {
-  background-color: #4CAF50;
-  color: white;
-  width: 80px;
-  height: 60px;
-  padding: 12px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+						<div class="form-group col-md-12">
+							<label for="description">DESCRIPTION</label>
+							<textarea name="category[description]" class="form-control" id="description" rows="3" placeholder="CATEGORY DESCRIPTION"><?php echo $category->description ?></textarea>
+						</div>
+					</div>
+					<div class="form-group">
 
-input[type=submit]:hover {
-  background-color: #45a049;
-}
+						<div class="custom-control custom-switch">
+							<?php if ($category->status) {
+								$label = 'checked';
+								$value = '1';
+							} else {
+								$label = '';
+								$value = '0';
+							}
+							?>
+							<input type="checkbox" class="custom-control-input" id="status" name='category[status]' value="<?php echo $value; ?>" <?php echo $label; ?>>
+							<label class="custom-control-label" for="status">Status</label>
+						</div>
+					</div>
 
-.container {
-  border-radius: 2px;
-  background-color: #f2f2f2;
-  padding: 15px;
-}
-input[type=dropdown] select,textarea{
-  width: 10%;
-  padding: 0px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  resize: vertical;
-}
-</style>
-<div class="container" id="form">
-<form method="POST"  action="<?php  $this->geturl("save");?>" >
-  
-  <h2><u>Category Details</u></h2>
-    <div class = "form-group">
-      <label>Name:-</label><br>
-      <input type="text" name="category[name]" align="center" value="<?php echo $categories->name; ?>" placeholder="category Name" required="true"><br>
-    </div>
+					<?php if (!$this->getRequest()->getGet('id')) { ?>
+						<button class="btn btn-primary" type="submit" name="add">Add Category
+							<i class="fa fa-plus"></i>
+						</button>
+					<?php } else { ?>
+						<button class="btn btn-primary" type="submit" name="edit">Update Category
+							<i class="fa fa-edit"></i>
+						</button>
+					<?php } ?>
 
-    <div class = "form-group">
-      <label>ParentId:-</label><br>
-      <select  name="category[parentId]" align="center" value="<?php echo $categories->parentId; ?>">
-            <?php if ($categoryOptions): ?>
-              <?php foreach ($categoryOptions as $categoryId => $name):?>                <option value="<?php echo $categoryId ?>"><?php echo $name ;?></option>
-             <?php endforeach; ?>
-          <?php endif; ?>
-          
+					<button type="reset" class="btn btn-warning">Reset <i class="fa fa-undo"></i></button>
+					<a class="btn btn-danger" href="<?php echo $this->getUrl()->getUrl('grid'); ?>">Cancel</a>
+				</fieldset>
+			</form>
 
-
-      </select><br>
-    </div>
-
-    <div class = "form-group">
-      <label>PathId:-</label><br>
-      <input type="text" name="category[PathId]" align="center" value="<?php echo $categories->PathId; ?>" placeholder="category PathId" required="true"><br>
-    </div>
-
-
-     <div class = "form-group">
-      <label>Status:-</label> <br>
-      <select name="category[status]"> 
-        <?php
-              foreach ($statusOption as $key => $value)
-          {
-                  echo "<option value='{$key}'";
-                  if($categories->status == $key){echo "selected"; 
-          
-            }
-                  echo ">{$value}</option>";
-              }
-          ?>
-      </select><br> 
-    </div>
-
-    <!-- <div class = "form-group">
-      <label>Description:-</label><br>
-      <input type="text" name="category[description]" value="<?php //echo $categories->description; ?>" placeholder="Description of category" required="true"><br>
-    </div>  -->
-
-    <div class = "form-group">
-      <input type="submit" name="submit" class="button save" id="submit" value="Add">
-    </div>
-</form> 
+		</div>
+	</div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -10,7 +10,7 @@ class Block_Payment_Grid extends Block_Core_Template
 	function __construct()
 	{
 		parent::__construct();
-		$this->setTemplate('./View/payment/grid.php');
+		$this->setTemplate('View/payment/grid.php');
 		$this->setPayments();
 	}
 
@@ -24,7 +24,18 @@ class Block_Payment_Grid extends Block_Core_Template
 
     public function getPayments()
     {	
+
+        if (!$this->payments) 
+        {
+           $this->setPayments();
+
+        }
         return $this->payments;
+    }
+
+    public function getTitle()
+    {
+        return "Manage Payments";
     }
 
 }

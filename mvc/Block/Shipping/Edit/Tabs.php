@@ -1,27 +1,21 @@
-<?php 
+<?php
 
-Mage::loadFileByClassName('Block_Core_Tabs');
-class Block_Shipping_Edit_Tabs extends Block_Core_Tabs
+Mage::loadClassByFileName("Block_Core_Form_Tabs");
+class Block_Shipping_Edit_Tabs extends Block_Core_Form_Tabs
 {
-	function __construct()
-	{
 
-		parent::__construct();
-		$this->setTemplate('View/shipping/edit/tabs.php');
-		$this->prepareTab();
-		$this->setDefaultTab('shipping');
+    protected $tabs = [];
+    protected $default = null;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setTemplate("View/shipping/edit/tabs.php");
+        $this->prepareTab();
+    }
 
-	}
-
-	public function prepareTab()
-	{
-		$this->addTab('shipping',['label'=>'shipping information','block' =>'Block_shipping_Edit_Tabs_Form']);
-		// $this->addTab('shipping1',['label'=>'shipping information1','block'=>'Block_shipping_Edit_Tabs_Form1']);
-
-	}
-
-	
-
+    public function prepareTab()
+    {
+        $this->addTab('shipping', ["label" => "Shipping Information", "className" => 'Block_Shipping_Edit_Tabs_Form']);
+        $this->setDefault('shipping');
+    }
 }
-
- ?>

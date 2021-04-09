@@ -1,141 +1,147 @@
 <?php
 
-Mage::loadFileByClassName('Controller_Core_Admin');
-Mage::loadFileByClassName('Block_Core_Layout');
-Mage::loadFileByClassName('Model_Core_Adapter');
-
+Mage::loadClassByFileName('Controller_Core_Admin');
 
 class Controller_Category extends Controller_Core_Admin
 {
-    
-    protected $categories = [];
 
     public function __construct()
     {
-        parent:: __construct();
-    }
-       
-    public function setCategories($categories)
-    {
-        $this->categories = $categories;
-        return $this;
-    }
-
-    public function getCategories()
-    {
-        return $this->categories;
-    }
-
-    public function layoutAction()
-    {
-        
-        $layout = $this->getLayout(); 
-        $gridBlock = Mage::getBlock('Block_Category_Grid');
-        $layout->getChild('content');
-        $this->renderLayout();  
+        parent::__construct();
     }
 
     public function gridAction()
     {
-       
-        try
-        {
+        $gridBlock = Mage::getBlock("Block_Category_Grid")->setCategories();
+        $layout = $this->getLayout();
+        $layout->setTemplate("View/core/layout/one_column.php");    
+        $layout->getChild("Content")->addChild($gridBlock, 'Grid');
 
-            // $layout = $this->getLayout();
-            // $content = $layout->getChild('content');
-            // $categorygrid = Mage::getBlock('Block_Category_Grid');
-            // $content->addChild($categorygrid,'content');
-            // $this->renderLayout();
-             $category = Mage::getModel('Model_Category');
-            $this->setCategories( $category->fetchAll());
-            require_once 'View/category/grid.php';
-        } 
-        catch (Exception $e) {
-            echo $e->getMessage();
+        $this->renderLayout();
+    }
+
+    public function editAction()
+    {
+        try {
+            if (!($id = $this->getRequest()->getGet('id'))) {
+                throw new Exception("Id Not Found", 1);
+            }
+
+            $layout = $this->getLayout();
+
+            $categoryTab = Mage::getBlock("Block_Category_Edit_tabs");
+            $layout->getChild('Sidebar')->addChild($categoryTab, 'Tab');
+
+            $form = Mage::getBlock('Block_Category_Edit');
+            $layout->getChild('Content')->addChild($form, 'Grid');
+
+            $this->renderLayout();
+        } catch (Exception $e) {
+            $this->getMessage()->setFailure($e->getMessage());
+            $this->redirect('grid');
         }
-        
     }
 
     public function formAction()
     {
-    
-        try
-        {
+        $layout = $this->getLayout();
 
-            $layout = $this->getLayout();
-            $layout->setTemplate('View/core/layout/threeColumn.php');
-            $left = $layout->getChild('left');
-            $lefttab = Mage::getBlock('Block_Category_Edit_Tabs');
-            $left->addChild($lefttab);
-            $content = $layout->getChild('content');
-            $categorygrid = Mage::getBlock('Block_Category_Edit');
-            $content->addChild($categorygrid);
-            $this->renderLayout();
-            
-        }
-        catch(Exception $e)
-        {
-            echo $e->getMessage();
-            die();
-        }
+        $categoryTab = Mage::getBlock("Block_Category_Edit_tabs");
+        $layout->getChild('Sidebar')->addChild($categoryTab, 'Tab');
+
+        $form = Mage::getBlock('Block_Category_Edit');
+        $layout->getChild('Content')->addChild($form, 'Grid');
+        $this->renderLayout();
     }
+
     public function saveAction()
-    {       
+    // if (!$this->getRequest()->isPost()) {
+    //     throw new \Exception("Invalid Request.");
+    // }
+    // $postData = $this->getRequest()->getPost('category');
+    // $category = \Mage::getModel('Model\Category');
+    // if ($categoryId = $this->getRequest()->getGet('id')) {
+    //     if (!$category->load($categoryId)) {
+    //         throw new \Exception("Id is invalid.");
+    //     }
+    // }
+    // $categoryPathId = $category->pathId.'/';
+    
+    // $category->setData($postData);
+    // if (!$category->save()) {
+    //     throw new \Exception("Something went wrong.");
+    // }
+
+    {
         try {
-             if (!$this->getRequest()->isPost()) {
-                throw new Exception("Invalid Request.");
+              
+            $postData = $this->getRequest()->getPost('category');
+            $cat = Mage::getModel('Model_Category');  
+            $cat->setData($postData);
+            
+            
+            if ($id = $this->getRequest()->getGet('id')) {
+                $cat = $cat->load($id);
+               
+               
+                if (!$cat) {
+                    throw new Exception('Please Enter Valid ID');
                 }
-                $category = Mage::getModel('Model_Category');
-                $postData = $this->getRequest()->getPost('category');
-                if ($categoryId = $this->getRequest()->getGet('id')) {
-                    if (!$category->load($categoryId)) {
-                        throw new Exception("Something went wrong.");
-                   
-                    }
-                        $postData['categoryId'] = $categoryId;
-                        // $postData['updatedDate'] = date("Y-m-d H:i:s");
-                } else {
-                   // $postData['createdDate'] = date("Y-m-d H:i:s");
-                }
+               
+                $this->getMessage()->setSuccess('Record Updated Successfully.....');
                 
-                $category->setData($postData);
-                if (!$category->save()) {
-                throw new Exception("Something went wrong.");
-                }
-                $this->redirect('grid',null,null,true);
+            } else {
+                
+                $this->getMessage()->setSuccess('Record Inserted Successfully.....');
+            }
+            $cat->save();
+            $categoryPathId = $cat->pathId;  
+            $cat->updatePathId($cat);
+            $cat->updateChildrenPathIds($categoryPathId);
         } 
-        catch (Exception $e) {
-            echo $e->getmessage();
-            die();
+        catch (Exception $e) 
+        {
+            $this->getMessage()->setFailure($e->getMessage());
+            $this->redirect('grid', null, [], true);
         }
+        $this->redirect('grid', null, [], true);
     }
 
+    public function changeStatusAction()
+    {
+        try {
+            $id = $this->getRequest()->getGet('id');
+            $status = $this->getRequest()->getGet('status');
+            $model = Mage::getModel('Model_Category');
+            $model->id = $id;
+            $model->status = $status;
+            $model->changeStatus();
+            if ($model->changeStatus()) {
+                $this->getMessage()->setSuccess("Status Changed Successfully");
+            }
+        } catch (Exception $e) {
+            $this->getMessage()->setSuccess($e->getMessage());
+        }
+        $this->redirect('grid', null, null, true);
+    }
     public function deleteAction()
     {
-        try{
-            $categoryId = (int) $this->getRequest()->getGet('id');
-            if (!$categoryId) {
-                
-                throw new Exception("Error Processing Request");
-
-            }
+        try {
             $category = Mage::getModel('Model_Category');
-            if (!$category->delete($categoryId)) {
-                throw new Exception("Something went wrong.");
+            if ($id = $this->getRequest()->getGet('id')) {
+                $category = $category->load($id);
+                if (!$category) {
+                    throw new Exception("Invalid ID");
+                }
             }
-            $this->redirect('grid', null, null, true);
+            $parentId = $category->parentId;
+            $pathId = $category->pathId;
+            $category->updateChildrenPathIds($pathId, $parentId);
+            $category->id = $category->categoryId;
+            $category->delete();
+        } catch (Exception $e) {
+            $this->getMessage()->setFailure($e->getMessage());
         }
-        catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    }
-
-    public function testAction()
-    {
-        $category = Mage::getModel('Model_Category');
-        $category->name = 'Ratan';
-        $category->number = 123;
+        $this->redirect('grid');
     }
 }
-
-?>

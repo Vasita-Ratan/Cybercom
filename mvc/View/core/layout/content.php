@@ -1,5 +1,9 @@
-<?php foreach ($this->getChildren() as $child): ?>
-	<?php  echo $child->toHtml() ?>
+<?php
 
-	
-<?php endforeach ?>
+$children = $this->getChildren();
+
+foreach ($children as $key => $value) {
+   echo $value->toHtml();
+}
+
+?>

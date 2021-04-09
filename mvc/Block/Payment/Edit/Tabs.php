@@ -1,28 +1,21 @@
-<?php 
+<?php
 
-Mage::loadFileByClassName('Block_Core_Tabs');
-class Block_Payment_Edit_Tabs extends Block_Core_Tabs
+Mage::loadClassByFileName("Block_Core_Form_Tabs");
+class Block_Payment_Edit_Tabs extends Block_Core_Form_Tabs
 {
-	
-	public function __construct()
-	{
-		parent::__construct();
-		$this->setTemplate('View/payment/edit/tabs.php');
-		$this->prepareTab();
-		$this->setDefaultTab('payment');
 
-	}
+    protected $tabs = [];
+    protected $default = null;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setTemplate("View/payment/edit/tabs.php");
+        $this->prepareTab();
+    }
 
-	public function prepareTab()
-	{
-		$this->addTab('payment',['label'=>'payment information','block'=>'Block_Payment_Edit_Tabs_Form']);
-		// $this->addTab('payment1',['label'=>'payment information1','block'=>'Block_Category_Edit_Tabs_Form1']);
-
-	}
-
-	
-
-
+    public function prepareTab()
+    {
+        $this->addTab('payment', ["label" => "Payment Information", "className" => 'Block_Payment_Edit_Tabs_Form']);
+        $this->setDefault('payment');
+    }
 }
-
- ?>

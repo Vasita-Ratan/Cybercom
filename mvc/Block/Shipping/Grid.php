@@ -1,32 +1,42 @@
 <?php
 
 
-/**
- * 
- */
+
 class Block_Shipping_Grid extends Block_Core_Template
 {
-	protected $shippings = [];
-	function __construct()
-	{
-		parent::__construct();
-		$this->setTemplate('./View/shipping/grid.php');
-		$this->setShippings();
-	}
 
-	public function setShippings($shippings = null)
+    protected $shippings = null;
+    protected $message = null;
+
+    public function __construct()
     {
-    	$shippings = Mage::getModel('Model_Shipping');
-    	$shippings = $shippings->fetchAll();
+        parent::__construct();
+        $this->setTemplate('View/shipping/grid.php');
+    }
+
+    public function setShippings($shippings = null)
+    {
+        
+        $shippings = Mage::getModel("Model_Shipping");
+        $shippings = $shippings->fetchAll();
         $this->shippings = $shippings;
         return $this;
     }
 
     public function getShippings()
-    {	
-        return $this->Shippings;
+    {
+
+        if (!$this->shippings) {
+
+            $this->setShippings();
+        }
+        return $this->shippings;
     }
 
+    public function getTitle()
+    {
+        return "Manage Shippings";
+    }
 }
 
 ?>

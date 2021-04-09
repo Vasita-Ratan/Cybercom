@@ -1,201 +1,85 @@
 <?php 
+
 Mage::getController("Controller_Payment");
+
 $payments = $this->getPayments();
-?>
-
-<br>
-<!DOCTYPE html>
-<html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.topnav {
-  overflow: hidden;
-  height: 50px;
-  background-color: #475659;
-  font-color:#fcfffc;
-}
-.topnav-right {
-  overflow: hidden;
-  background-color: #888c88;
-  font-color:white;
-}
-
-.topnav a {
-  float: left;
-  color: black;
-  text-align: center;
-  padding: 11px 11px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #a7b0a7;
-  color:blue ;
-}
-
-.topnav a.active {
-  background-color: #1a1c1c;
-  color: white;
-}
-
-.topnav-right {
-  float: right;
-}
-
-#icon{
-
-  color: #debe7a;
-}
-.com{
-
-  padding: 10,10,10,10;
-  font-size: 25px;  
-  color: white;
-}
-.font
-{
-    color: black;
-}
-#red{
-
-  color: #64b3a3;
-}
-
-</style>
-</head>
-<body>
-<div class="topnav">
-    <a hrer="#"><div class="com"><i id = "red" class="fa fa-shopping-cart" aria-hidden="true"><b class="font">Questecom</i></div></a>
-  <div class="topnav-right">
-     <a href=<?php echo $this->getUrl('grid','admin')?>><i id="icon"  class="fa fa-user-circle-o" aria-hidden="true"><b class="font">Admin</b></i></a>
-
-     <a href=<?php echo $this->getUrl('grid','customer')?>><i  id="icon" class="fa fa-user" aria-hidden="true"><b class="font">Customer</i></a>
-
-     <a href=<?php echo $this->getUrl('grid','customer group')?>><i  id="icon" class="fa fa-users" aria-hidden="true"><b class="font">Customer Group</i></a>
-
-     <a href=<?php echo $this->getUrl('grid','product')?>><i  id="icon" class="fa fa-pencil" aria-hidden="true"><b class="font">Product</i></a>
-
-     <a href=<?php echo $this->getUrl('grid','category')?>><i  id="icon" class="fa fa-th-list" aria-hidden="true"><b class="font">Category</i></a>
-
-     <a href=<?php echo $this->getUrl('grid','shipping')?>><i  id="icon" class="fa fa-truck" aria-hidden="true"><b class="font">Shipping</i></a>
-
-     <a href=<?php echo $this->getUrl('grid','payment')?>><i  id="icon" class="fa fa-paypal" aria-hidden="true"><b class="font">Payment</i></a>
-  </div>
-</div><br>
 
 
+ ?>
 
 
+<div class="page-header" id="banner">
+    <div class="row">
+        <div class="col-lg-8 col-md-7 col-sm-6">
+            <a href="<?php echo $this->getUrl()->getUrl('form'); ?>" class="btn btn-primary" name="update">Add Payment
+                +
+            </a>
+        </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card   mb-12">
+            <div class="card-body">
+              <!--   <h4 class="card-title"><?php// echo $this->getTitle(); ?></h4> -->
+                <table class="table">
+                    <thead bgcolor="#edfdff">
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th colspan="3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                       
+                        if ($payments == "") {
+                        ?>
+                            <tr>
+                                <td colspan="9">
+                                    <strong>
+                                        <?php echo 'No Records Found'; ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                            <?php
 
-
-</body>
-</html>
-
-<style>
-
-table, th, td {
-    border: 1px solid black;
-    
-  }
-  th, td {
-    padding: 10px;
-    text-align: left;
-  }
-  #t01 tr:nth-child(even) {
-    background-color: #eee;
-  }
-  #t01 tr:nth-child(odd) {
-   background-color: #fff;
-  }
-  #t01 th {
-    background-color: #34cdeb;
-    color: black;
-  }
-
-.add{
-  background-color: green; 
-  border: none;
-  color: white;
-  width: 150px;
-  padding: 5px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 1020px;
-  cursor: pointer;
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-  border-radius: 12px;
-
-}
-.status-Enabled
-{
-  background-color: red;
-}
-#pencil{
-
-  border-radius: 7px;
-  background-color: #c7300e;
-  padding: 8px; 
-  color: #0ec733;
-}
-#box{
-
-  border-radius: 7px;
-  background-color: #0a9186;
-  padding: 8px;
-  color: #c70e0e; 
-
-}
-</style>
-<br>
-<h1><?php //echo $this->getTitle(); ?> </h1>
-
- <a href="<?php echo "{$this->geturl("form", null, null, true)}"; ?>" ><button  class="add">Add Payments</button></a>
-<table id="t01" align="center" border="1" width="60%" height="60%">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Code</th>
-      <th>Status</th>
-      <th>Description</th>
-      <th>CreatedDate</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-        <?php
-    
-            foreach($payments as $key=>$value){
-        ?>
-         <tr>
-              <td><?php echo $value->methodId;?></td>
-              <td><?php echo $value->name; ?></td>
-               <td><?php echo $value->code; ?></td>
-              <td><?php if($value->status == 0){echo "Enabled";} else {echo "Disabled"; } ?></td>
-               <td><?php echo $value->description; ?></td>
-                <td><?php echo $value->createdDate; ?></td>
-              <td><a href="<?php echo "{$this->geturl("form", null, ['id' => $value->methodId], true)}"; ?>" ><i id = "pencil" class="fa fa-pencil" aria-hidden="true"></i></a>
-              <a href="<?php echo "{$this->geturl("delete", null, ['id' => $value->methodId], true)}"; ?>" ><i id = "box" class="fa fa-trash" aria-hidden="true"></i></a></td>
-          </tr>
-          <?php
-
-        }
-
-        ?>
-
-  </tbody>
-</table>
-
-
+                        } else {
+                            foreach ($payments->getData() as $key => $value) {
+                                //Method Id	Name	Code	Amount	Description	Status	Created At	Action
+                            ?>
+                                <tr>
+                                    <td><?php echo $value->name; ?></td>
+                                    <td><?php echo $value->code; ?></td>
+                                    <td><?php echo $value->amount; ?></td>
+                                    <td><?php echo $value->description; ?></td>
+                                    <td><?php
+                                        if ($value->status) {
+                                            echo 'Enabled';
+                                        } else {
+                                            echo 'Disabled';
+                                        }
+                                        ?>
+                                         <a href="<?php echo $this->getUrl()->getUrl('changeStatus', NULL, ['id' => $value->methodId, 'status' => $value->status], true); ?>">
+                                            <i class="fa btn <?php echo ($value->status == 1) ? "fa-toggle-on" : "fa-toggle-off"; ?>" style="color: #34bf54; font-size:20px"></i>
+                                        </a>
+                                    </td>
+                                    <td><?php echo $value->createdDate ?></td>
+                                    <th>
+                                        <a href="<?php echo $this->getUrl()->getUrl('form', NULL, ['id' => $value->methodId]); ?>"><i  class="fa fa-edit" style="color:#0b56bd ;font-size:25px"></i></a>
+                                        <a href="<?php echo $this->getUrl()->getUrl('delete', NULL, ['id' => $value->methodId]); ?>"><i class="fa fa-trash" style="color: #e60909 ; font-size:25px"></i></a>
+                                    </th>
+                                </tr>
+                        <?php }
+                        } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

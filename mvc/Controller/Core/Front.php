@@ -1,25 +1,17 @@
 <?php
 
-class Controller_Core_Front
-{  
-	public static function init()
-	{
-		
-		$request = Mage::getModel('Model_Core_Request');
-		$controllerName = $request->getControllerName();
-		if ($controllerName == 'index') {
-			require_once 'index.php';
-			die();
-		}
-		
-		$className = "Controller_".$controllerName;
-		$actionName		= $request->getActionName();
-		$method = $actionName."Action";
-		$controller = Mage::getController($className);
-		$controller->$method();
-	}
+class Controller_Core_Front{
+    public static function init()
+    {
+        $reqest = Mage::getModel('Model_Core_Request');
 
-
+        $controllerName = ucwords($reqest->getControllerName());
+        $controllerName = "Controller_".$controllerName;
+        $actionName = $reqest->getActionName()."Action";
+        $controller = Mage::getController($controllerName);
+        $controller = new $controllerName();
+        $controller->$actionName();
+    }
 }
 
 ?>

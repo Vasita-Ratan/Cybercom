@@ -1,40 +1,34 @@
-<?php 
+<?php
 
-Mage::loadFileByClassName('Block_Core_Template');
+Mage::loadClassByFileName("Block_Core_Template");
 class Block_Payment_Edit_Tabs_Form extends Block_Core_Template
 {
-	protected $payment = null;
-	function __construct()
-	{
-		$this->setTemplate('View/payment/edit/tabs/form.php');
-	}
+    protected $payments = null;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setTemplate("View/payment/edit/tabs/form.php");
+    }
 
-	public function setPayment($payment = null)
-	{
-
-		if (!$payment) 
-		{
-			$payment = Mage::getModel('Model_Payment');
-	        if($paymentId = $this->getUrl()->getRequest()->getGet('id'))
-	        {
-	            if(!$payment->load($paymentId))
-	            {
-	                throw new Exception("Error promapting");
-	            }
-	        }
-		}
-        $this->payment = $payment;
+    public function setPayments($payments = null)
+    {
+        if (!$payments) {
+            $payments = Mage::getModel("Model_Payment");
+            if ($id = $this->getRequest()->getGet('id')) {
+                $payment = $payments->load($id);
+                if (!$payment) {
+                    return null;
+                }
+            }
+        }
+        $this->payments = $payments;
         return $this;
-	}
-
-	public function getPayment()
-	{
-		if (!$this->payment) {
-			$this->setPayment();
-		}
-		 return $this->payment;
-	}
-	
+    }
+    public function getPayments()
+    {
+        if (!$this->payments) {
+            $this->setPayments();
+        }
+        return $this->payments;
+    }
 }
-
- ?>

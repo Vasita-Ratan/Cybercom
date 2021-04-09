@@ -1,42 +1,35 @@
+<?php
+Mage::getBlock('Block_Core_Template');
+class Block_Product_Edit_Tabs_Media extends Block_Core_Template
+{
+    protected $imageData = null;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setTemplate('View/product/edit/tabs/media.php');
+    }
+    public function setProductMedia()
+    {
 
- <?php 
+        $media = Mage::getModel('Model_Media');
+        $id = $this->getRequest()->getGet('id');
+        $query = "SELECT * FROM `media` WHERE `productid`= {$id}";
+        $this->imageData = $media->fetchAll($query);
+        return $this->imageData;
+    }
+    public function getProductMedia()
+    {
+        if (!$this->imageData) {
+            $this->setProductMedia();
+        }
+        return $this->imageData;
+    }
+    public function getTitle()
+    {
+        return 'Product Media';
+    }
 
- Mage::loadFileByClassName('Block_Core_Template');
- class Block_Product_Edit_Tabs_Media extends Block_Core_Template
- {
- 	protected $media= null;
- 	function __construct()
- 	{
- 		$this->setTemplate('View/product/edit/tabs/media.php');
- 	}
+}
 
- 	public function setMedia($media= null)
- 	{
- 		if (!$media) 
- 		{
- 			$media= Mage::getModel('Model_Media');
- 		    if($mediaId = $this->getUrl()->getRequest()->getGet('id'))
- 		    {
- 		        if(!$media->load($mediaId))
- 		        {
- 		            throw new Exception("Error promapting");
- 		        }
- 		    }
- 		    $this->media = $media;
- 		    return $this;	
- 		}
-		
- 	}
 
- 	public function getMedia()
- 	{
- 		if(!$this->media)
- 		{
- 			 $this->setMedia();	
- 		}
- 		return $this->media;
- 	}
-	
- }
-
- ?>
+?>

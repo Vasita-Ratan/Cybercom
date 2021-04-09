@@ -1,43 +1,35 @@
-<?php 
+<?php
 
-Mage::loadFileByClassName('Block_Core_Template');
+Mage::loadClassByFileName("Block_Core_Template");
 class Block_Shipping_Edit_Tabs_Form extends Block_Core_Template
 {
-	protected $shipping = null;
-	function __construct()
-	{
-		$this->setTemplate('View/shipping/edit/tabs/form.php');
-	}
+    protected $shippings = null;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setTemplate("View/shipping/edit/tabs/form.php");
+    }
 
-	public function setShipping($shipping = null)
-	{
+    public function setShippings($shippings = null)
+    {
+        if (!$shippings) {
+            $shippings = Mage::getModel("Model_Shipping");
+            if ($id = $this->getRequest()->getGet('id')) {
+                $shippings = $shippings->load($id);
+                if (!$shippings) {
+                    return null;
+                }
+            }
+        }
+        $this->shippings = $shippings;
+        return $this;
+    }
 
-		if(!$shipping)
-		{
-			$shipping = Mage::getModel('Model_Shipping');
-		    if($shippingId = $this->getUrl()->getRequest()->getGet('id'))
-		    {
-		        if(!$shipping->load($shippingId))
-		        {
-		            throw new Exception("Error promapting");
-		        }
-		    }
-		    $this->shipping = $shipping;
-		    return $this;
-		}
-	}
-
-	public function getShipping()
-	{
-		if(!$this->shipping)
-		{
-			$this->setShipping();
-		}
-		return $this->shipping;
-	}
-	
-
-	
+    public function getShippings()
+    {
+        if (!$this->shippings) {
+            $this->setShippings();
+        }
+        return $this->shippings;
+    }
 }
-
- ?>

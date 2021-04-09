@@ -109,40 +109,41 @@ class Model_Core_Adapter
         return false;
     }
     
-     public function fetchPairs($query)
+    public function fetchPairs($query)
     {
         if (!$this->isConnected()) 
         {
             $this->connection();
         }
         $result = $this->getConnect()->query($query);
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $rows = $result->fetch_all();
         if(!$rows)
         {
             return $rows;
         }
         $columns = array_column($rows, '0');
-        $values = array_column($rows, '1');
-        
+        $values = array_column($rows, '1'); 
+      
         return array_combine($columns, $values);
     }
 
     public function fetchAll($query)
     {
+
         if (!$this->isConnected()) 
         {
+
             $this->connection();
         }
-        $result = $this->getConnect()->query($query);
-        if ($result) {
-            return $result = $result->fetch_all(MYSQLI_ASSOC);
-        }
-        return false;
+         $result = $this->getConnect()->query($query);
+             if ($result) 
+                {   
+
+                    return $result = $result->fetch_all(MYSQLI_ASSOC);
+                }
+                return false;
     }
     
 }
 
-
-
 ?>
-

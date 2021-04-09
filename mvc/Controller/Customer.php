@@ -1,155 +1,217 @@
 <?php
 
-Mage::loadFileByClassName('Controller_Core_Admin');
-Mage::loadFileByClassName('Block_Core_Layout');
-Mage::loadFileByClassName('Model_Core_Adapter');
+Mage::loadClassByFileName('Controller_Core_Admin');
 
 
 class Controller_Customer extends Controller_Core_Admin
 {
-    
-    protected $customers = [];
 
     public function __construct()
     {
-        parent:: __construct();
-    }
-
-    public function setCustomers($customers)
-    {
-        $this->customers = $customers;
-        return $this;
-    }
-
-    public function getCustomers()
-    {
-        return $this->customers;
-    }
-
-    public function layoutAction()
-    {
-        
-        $layout = $this->getLayout(); 
-        $gridBlock = Mage::getBlock('Block_Customer_Grid');
-        $layout->getChild('content');
-        $this->renderLayout();  
+        parent::__construct();
     }
 
     public function gridAction()
     {
-       
-        try
-        {
 
-            // $layout = $this->getLayout();
-            // $content = $layout->getChild('content');
-            // $customergrid = Mage::getBlock('Block_Customer_Grid');
-            // $content->addChild($customergrid,'content');
-            // $this->renderLayout();
-
-            $customer = Mage::getModel('Model_Customer');
-            $this->setCustomers($customer->fetchAll());
-            require_once('View/customer/grid.php');
-        } 
-        catch (Exception $e) {
-            echo $e->getMessage();
-        }
-        
+        $gridBlock = Mage::getBlock("Block_Customer_Grid");
+        $layout = $this->getLayout();
+        $layout->setTemplate("View/core/layout/one_column.php");
+        $layout->getChild("Content")->addChild($gridBlock, 'Grid');
+        $this->renderLayout();
     }
     public function formAction()
     {
-        try
-        {
 
-            $layout = $this->getLayout();
-            $layout->setTemplate('View/core/layout/threeColumn.php');
-            $left = $layout->getChild('left');
-            $lefttab = Mage::getBlock('Block_Customer_Edit_Tabs');
-            $left->addChild($lefttab);
-            $content = $layout->getChild('content');
-            $customergrid = Mage::getBlock('Block_Customer_Edit');
-            $content->addChild($customergrid);
-            $this->renderLayout();
-        }
-        catch(Exception $e)
-        {
-            echo $e->getMessage();
-            die();
-        }
-    
+        $form = Mage::getBlock('Block_Customer_Edit');
+        $layout = $this->getLayout();
+
+
+        $customerTab = Mage::getBlock("Block_Customer_Edit_Tabs");
+        $layout->getChild('Sidebar')->addChild($customerTab, 'Tab');
+
+        $layout->getChild('Content')->addChild($form, 'Grid');
+        $this->renderLayout();
     }
+
     public function saveAction()
-    {       
-        try 
-        {
-             if (!$this->getRequest()->isPost()) 
-             {
-                throw new Exception("Error Processing Request", 1);
-
-             }
-
-            $customer = Mage::getModel('Model_Customer');
-            $postData = $this->getRequest()->getPost('customer');
-            if ($customerId = $this->getRequest()->getGet('id')) 
-            {
-                if (!$customer->load($customerId)) 
-                {
-                    throw new Exception("Something went wrong.");
-               
+    {
+        try {
+            $customer = Mage::getModel("Model_Customer");
+            if (!$this->getRequest()->isPost()) {
+                throw new Exception("Invalid Post Request");
+            }
+            $customerId = $this->getRequest()->getGet('id');
+            if (!$customerId) {
+                date_default_timezone_set('Asia/Kolkata');
+                $customer->createdDate = date("Y-m-d H:i:s");
+                $this->getMessage()->setSuccess("Customer Inserted Successfully");
+            } else {
+                $customer =  $customer->load($customerId);
+                if (!$customer) {
+                    throw new Exception("Data Not Found");
                 }
-                 $postData['customerId'] = $customerId;
-                    // $postData['updatedDate'] = date("Y-m-d H:i:s");
-            } 
-            else 
-            {
-                $postData['createdDate'] = date("Y-m-d H:i:s");
+                date_default_timezone_set('Asia/Kolkata');
+                $customer->updatedDate = date("y-m-d h:i:s");
+                $this->getMessage()->setSuccess("Customer Updated Successfully");
             }
+
+            $customerData = $this->getRequest()->getPost('customer');
+           
+            if (!array_key_exists('status', $customerData)) {
+                $customerData['status'] = 0;
+            } else {
+                $customerData['status'] = 1;
+            }
+            $customer->setData($customerData);
+            $customer->save();
+        } catch (Exception $e) {
+            $this->getMessage()->setFailed($e->getMessage());
+        }
+        $this->redirect('grid', null, null, true);
+    }
+    public function changeStatusAction()
+    {
+        try {
+
+            $id = $this->getRequest()->getGet('id');
+            $st = $this->getRequest()->getGet('status');
+            $model = Mage::getModel('Model_Customer');
+            $model->id = $id;
+            $model->status = $st;
+            $model->changeStatus();
+            if ($model->changeStatus()) {
+                $this->getMessage()->setSuccess("Customer Status Updated Successfully");
+            }
+        } catch (Exception $e) {
+            $this->getMessage()->setFailed($e->getMessage());
+        }
+        $this->redirect('grid', null, null, true);
+    }
+    public function deleteAction()
+    {
+        try {
+            if ($this->request->isPost()) {
+                throw new Exception("Invalid Request");
+            }
+
+            $id = $this->getRequest()->getGet('id');
+            $delModel = Mage::getModel('Model_Customer');
+            $delModel->id = $id;
+            $delModel->delete();
+            if ($delModel->delete()) {
+                $this->getMessage()->setSuccess("Customer Deleted SuccessFully !!");
+            } else {
+                $this->getMessage()->setFailure("Unable to Delete Customer!!");
+            }
+        } catch (Exception $e) {
+            $this->getMessage()->setFailure($e->getMessage());
+        }
+        $this->redirect('grid', null, null, true);
+    }
+
+    public function addressAction()
+    {
+       
+        try 
+        { 
+            if(!$this->getRequest()->isPost())
+            {
+                throw new Exception("Invalid Post Request");
+            }
+            $customerId = $this->getRequest()->getGet('id');
+            $customer = Mage::getModel("Model_CustomerAddress");
+        
+            $query="SELECT addressType from customer_address where customerId =".$customerId;
+            $existing = $customer->fetchAll($query); 
+            $typeArray = [];
             
-            $customer->setData($postData);
-            if (!$customer->save()) 
-            {
-                throw new Exception("Something went wrong.");
+            if($existing){
+                foreach ($existing->getData() as  $record) {
+                    $typeArray[] = $record->addressType;
+                }
             }
-            $this->redirect('grid',null,null,true);
+
+            $customerBillingData = $this->getRequest()->getPost('billing');
+
+            if($customerBillingData['address']){
+                if(in_array('Billing',$typeArray)){
+                    
+                    $customer->customerId = $customerId;
+                    $customer->addressType = "Billing";
+                    $customer->setData($customerBillingData);
+                    $updateData = $customer->getData();
+
+                    $value= array_values($updateData);
+                    $field = array_keys($updateData);
+                    $final = null;
+        
+                    for ($i=0; $i < count($field); $i++) {
+                        if ($field[$i] == "customerId") {
+                            $id = $value[$i];
+                            continue;
+                        }
+                        $final = $final."`".$field[$i]."`='".$value[$i]."',";
+                    }
+                    $final = rtrim($final,",");
+                    
+                    $query ="UPDATE `customer_address` SET {$final} WHERE `customerID` = '{$id}' and `addressType` = 'Billing'";
+                    
+                    $customer->update($query); 
+                    $this->getMessage()->setSuccess("Billing Address Updated !!");
+                }
+                else{
+                    $customer->customerId = $customerId;
+                    $customer->addressType = "Billing";
+                    $customer->setData($customerBillingData);
+                    $customer->save();
+                    $this->getMessage()->setSuccess("Billing Address Added !!");
+                }
+
+        }
+        $customer->resetArray();
+        
+        $customerShippingData = $this->getRequest()->getPost('shipping');
+        if($customerShippingData['address']){
+            
+            if(in_array('Shipping',$typeArray)){
+                $customer->customerId = $customerId;
+                $customer->addressType = "Shipping";
+                $customer->setData($customerShippingData);
+                $updateData = $customer->getData();
+
+                 $value= array_values($updateData);
+                 $field = array_keys($updateData);
+                 $final = null;
+     
+                 for ($i=0; $i < count($field); $i++) {
+                     if ($field[$i] == "customerId") {
+                         $id = $value[$i];
+                         continue;
+                     }
+                     $final = $final."`".$field[$i]."`='".$value[$i]."',";
+                 }
+                 $final = rtrim($final,",");
+                 
+                $query ="UPDATE `customer_address` SET {$final} WHERE `customerID` = '{$id}' and `addressType` = 'Shipping'";
+                
+                $customer->update($query);
+                $this->getMessage()->setSuccess("Shipping Address Updated !!");
+            }
+            else{
+                $customer->customerId = $customerId;
+                $customer->addressType = "Shipping";
+                $customer->setData($customerShippingData);
+                $customer->save();
+                $this->getMessage()->setSuccess("Shipping Address Added !!");
+            }
+        }
         } 
         catch (Exception $e) 
         {
-            echo $e->getmessage();
-            die();
-        }
-    }
+            $this->getMessage()->setFailed($e->getMessage());
+        }   
 
-    public function deleteAction()
-    {
-        try{
-            $customerId = (int) $this->getRequest()->getGet('id');
-            if (!$customerId) 
-            {
-                
-                throw new Exception("Error Processing Request");
-
-            }
-            $customer = Mage::getModel('Model_Customer');
-            if (!$customer->delete($customerId)) {
-                throw new Exception("Something went wrong.");
-            }
-            $this->redirect('grid', null, null, true);
-        }
-        catch (Exception $e) 
-        {
-            echo $e->getMessage();
-        }
-    }
-
-    public function testAction()
-    {
-        $customer = Mage::getModel('Model_Customer');
-        $customer->name = 'Ratan';
-        $customer->number = 123;
+        $this->redirect('form','customer',null,false);
     }
 }
-
-?>
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         new Exception("Invalid Request."}
-               

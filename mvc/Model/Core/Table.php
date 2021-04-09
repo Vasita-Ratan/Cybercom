@@ -2,23 +2,15 @@
 
 class Model_Core_Table
 {
+
+    protected $adapter = null;
     protected $tableName = null;
     protected $primaryKey = null;
-    protected $data = null;
-    protected $adapter = null;
+    protected $data = [];
 
-    function __construct()
+    public function __construct()
     {
-        
-    }
-    public function setTableName($tableName)
-    {
-        $this->tableName = $tableName;
-        return $this;
-    }
-    public function getTableName()
-    {
-        return $this->tableName;
+        $this->setTableName($this->tableName)->setPrimaryKey($this->primaryKey);
     }
     public function setPrimaryKey($primaryKey)
     {
@@ -29,150 +21,217 @@ class Model_Core_Table
     {
         return $this->primaryKey;
     }
-
-    public function setData($data)
+    public function setTableName($tableName)
     {
-        $this->data = $data;
+        $this->tableName = $tableName;
         return $this;
     }
-    public function getData($key = null,$optional = null)
+    public function getTableName()
     {
-    if (!$key) {
-       return $this->data;
+        return $this->tableName;
     }
-    if (!array_key_exists($key, $this->data)) {
-    return $optional;
-    }
-    return $this->data[$key];
-    }
-
-   public function __set($key, $value)//autometically assign the key and value dynamically becz magic method is use
+    public function setAdapter()
     {
-       $this->data[$key] = $value;//return the key value in array 
-       return $this;
-    }
-    public function __get($key)
-    {
-        return $this->data[$key];
-    }
-    public function save(array $data = null)
-    {
-        if (!$data) 
-        {
-            $data = $this->getData();
-        }
-        
-        $id = $this->getData($this->getPrimaryKey());
-        if (!$id) 
-        {
-           $id = $this->insert($data);
-        } else {
-            $this->update($data);
-        }
-        $this->load($id);
+        $this->adapter = Mage::getModel("model_core_adapter");
         return $this;
     }
-    public function insert(array $data = null)
-    {
-        if (!$data) 
-        {
-            $data = $this->getData();
-        }
-        $query = "INSERT INTO `{$this->getTableName()}` (";
-        $query .= implode(",", array_keys($data)) . ') VALUES (';
-        $query .= "'" . implode("','", array_values($data)) . "')";
-        // echo "<pre>";
-        // print_r($query);
-        // die();
-        return $this->getAdapter()->insert($query);
-
-    }
-    public function update(array $data = null,array $condition = null)
-    {
-        if (!$data) 
-        {
-            $data = $this->getData();
-        }
-        if (!$condition) 
-        {
-            $condition = [
-                $this->getPrimaryKey() => $data[$this->getPrimaryKey()],
-            ];
-        }
-        $query = "UPDATE `{$this->getTableName()}` SET ";
-        foreach ($data as $key => $value) 
-        {
-            $query.= "`{$key}`"."='".$value."',";
-        }
-        $query = substr($query, 0, -1);
-        $query .= " WHERE ";
-        foreach ($condition as $key => $value) {
-            $query .= "`{$key}`"."='".$value."' AND ";
-        }
-        $query = substr($query, 0, -5);
-        return $this->getAdapter()->update($query);
-    }
-    public function delete($id)
-    {
-        $id = (int) $id;
-        $query = "DELETE FROM `{$this->getTableName()}` WHERE `{$this->getPrimaryKey()}` = '{$id}'";
-        return $this->getAdapter()->delete($query);
-    }
-    public function load($id,$coloumnName = null)
-    {
-        $id = (int) $id;
-        if (!$coloumnName) 
-        {
-            $coloumnName = $this->getPrimaryKey();
-        }
-        $query = "SELECT * FROM `{$this->getTableName()}` WHERE `{$coloumnName}` = '{$id}'";
-        return $this->fetchRow($query);
-    }
-    public function fetchRow($query)
-    {
-        $data = $this->getAdapter()->fetchRow($query);
-        if (!$data)
-         {
-            return false;
-        }
-        $this->setData($data);
-        return $this;
-    }
-    
-
-    public function fetchAll()
-    {
-        $query = "SELECT * FROM `{$this->getTableName()}` ORDER BY `{$this->getPrimaryKey()}` DESC";
-        $rows = $this->getAdapter()->fetchAll($query);
-        if (!$rows) 
-        {
-            return false;
-        }
-        foreach ($rows as $key => &$value) {
-            $row = new $this;
-            $value = $row->setData($value);
-        }
-        return $rows;
-    }
-
-
     public function getAdapter()
     {
-        if(!$this->adapter)
-        {
+        if (!$this->adapter) {
             $this->setAdapter();
         }
         return $this->adapter;
     }
-    public function setAdapter()
+    public function setData(array $data)
     {
-       if(!$this->adapter)
-       {
-           $this->adapter = Mage::getModel('Model_Core_Adapter');
+        $this->data = array_merge($this->data, $data);
+        return $this;
+    }
+    public function getData()
+    {
+        return $this->data;
+    }
+    public function __set($name, $value)
+    {
+        $this->data[$name] = $value;
+        return $this;
+    }
+    public function __get($name)
+    {
+        if (!array_key_exists($name, $this->data)) {
+            return null;
+        }
+        return $this->data[$name];
+    }
+    public function save()
+    {
+        if (!array_key_exists($this->getPrimaryKey(), $this->data)) {
 
-       }
-       return $this;
-   }
+            // if(!array_key_exists('status',$this->data)){
+            //     $this->data['status']=0;
+            // }					
+            // else{
+            //     $this->data['status']=1;
+            // }
 
+            $key = implode(',', array_keys($this->data));
+
+            $values  = array_map(function ($string) {
+                return "'" . $string . "'";
+            }, array_values($this->data));
+
+            $actual_value = implode(",", $values);
+            $query = "insert into `{$this->getTableName()}`({$key}) VALUES ({$actual_value})";
+            
+            
+            return $this->insert($query);
+        } else {
+
+            if (!array_key_exists('status', $this->data)) {
+                $this->data['status'] = 0;
+            } else {
+                $this->data['status'] = 1;
+            }
+
+            $value = array_values($this->data);
+            $filed = array_keys($this->data);
+            $final = null;
+
+
+
+            for ($i = 0; $i < count($filed); $i++) {
+                if ($filed[$i] == $this->getPrimaryKey()) {
+                    $id = $value[$i];
+                    continue;
+                }
+                $final = $final . "`" . $filed[$i] . "`='" . $value[$i] . "',";
+            }
+            $final = rtrim($final, ",");
+
+            $query = "UPDATE `{$this->getTableName()}` SET {$final} WHERE `{$this->getPrimaryKey()}` = '{$id}'";
+           
+            $this->update($query);
+        }
+    }
+
+    public function fetchAll($query = null)
+    {
+        if (!$query) {
+            $query = "SELECT * FROM `{$this->getTableName()}`";
+        }
+       
+
+        $rows = $this->getAdapter()->fetchAll($query);
+     
+
+       
+        if (!$rows) {
+            return false;
+        }
+        foreach ($rows as $key => $value) {
+            $key = new $this;
+            $key->setData($value);
+            $rowArray[] = $key;
+        }
+       
+        $collectionClassName = get_class($this) . '_Collection';
+        
+        $collection = Mage::getModel($collectionClassName);
+        $collection->setData($rowArray);
+        
+        unset($rowArray);
+        return $collection;
+    }
+    
+
+    public function changeStatus()
+    {
+        $id = $this->data['id'];
+        $st = $this->data['status'];
+        if ($st) {
+            $status = 0;
+        } else {
+            $status = 1;
+        }
+        $query = "UPDATE {$this->getTableName()} SET status={$status} where {$this->getPrimaryKey()}={$id}";
+        if (!$this->update($query)) {
+            return false;
+        }
+        return true;
+    }
+    public function load($value)
+    {
+
+        $value = (int)$value;
+
+        $query = "select * from `{$this->getTableName()}` where `{$this->getPrimaryKey()}` = {$value}";
+       
+        $row = $this->getAdapter()->fetchRow($query);
+        if (!$row) {
+            return false;
+        }
+        $this->data = $row;
+        return $this;
+    }
+    public function insert($query)
+    {
+        $row = $this->getAdapter()->insert($query);
+
+        if (!$row) {
+            return false;
+        }
+
+        return $this;
+    }
+    public function update($query)
+    {
+        $row = $this->getAdapter()->update($query);
+        if (!$row) {
+            return false;
+        }
+        return $this;
+    }
+    public function delete($query = null)
+    {
+        if (!$query) {
+
+            $id = $this->data['id'];
+            $query = "delete from {$this->getTableName()} where {$this->getPrimaryKey()} = {$id}";
+           
+        }
+        $row = $this->getAdapter()->delete($query);
+        if (!$row) {
+            return false;
+        }
+        return $this;
+    }
+
+    
+    public function alterTable($query)
+    {
+        if (!$query) {
+            return false;
+        }
+
+        $row = $this->getAdapter()->alterTable($query);
+        if (!$row) {
+            return false;
+        }
+        return $this;
+    }
+    
+    public function fetchRow($query)
+	{
+		$data = $this->getAdapter()->fetchRow($query);
+		if (!$data) {
+			return false;
+		}
+		$this->setData($data);
+		return $this;
+	}
+    public function resetArray()
+    {
+        $this->data = [];
+        return $this;
+    }
 }
-?>

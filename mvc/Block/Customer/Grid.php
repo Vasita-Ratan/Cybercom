@@ -1,30 +1,38 @@
 <?php
 
 
-/**
- * 
- */
-class Block_Customer_Grid extends Block_Core_Template
-{
-	protected $customers = [];
-	function __construct()
-	{
-		parent::__construct();
-		$this->setTemplate('./View/customer/grid.php');
-		$this->setCustomers();
-	}
+Mage::loadClassByFileName('Block_Core_Template');
 
-	public function setCustomers($customers = null)
+class Block_Customer_Grid extends Block_Core_Template{
+
+    protected $customers = null;
+    public function __construct()
     {
-    	$customers = Mage::getModel('Model_Customer');
-    	$customers = $customers->fetchAll();
+
+        $this->setTemplate('View/customer/grid.php');
+        
+    }
+
+    public function setCustomers($customers = null)
+    {
+        if (!$customers) {
+            $customers = Mage::getModel("Model_Customer");
+            $customers = $customers->fetchAll();
+        }
         $this->customers = $customers;
         return $this;
     }
-
     public function getCustomers()
-    {	
-        return $this->customers;
+    {
+        if (!$this->customers) {
+            $this->setCustomers();
+            
+        }
+        return $this->customers;     
+    }
+    public function getTitle()
+    {
+        return "Manage Customers";
     }
 
 }

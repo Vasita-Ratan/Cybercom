@@ -1,96 +1,166 @@
-<?php $payments = $this->getPayment(); 
-$statusOption = [0 => 'Enabled', 1 => 'Disabled'];?>
-<style>
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
+<div class="container">
+    <div class="card text-left">
+        <div class="card-body">
+            <h4 class="card-title"></h4>
+            <form action="<?php echo $this->getUrl()->getUrl('save'); ?>" method="post">
 
-input[type=text], select, textarea {
-  width: 20%;
-  padding: 4px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  box-sizing: border-box;
-  margin-top: 0px;
-  margin-bottom: 6px;
-  resize: vertical;
-}
+                <fieldset>
+                    <legend>
+                        <?php if ($this->getRequest()->getGet('id')) { ?>
+                            <p class="h2 text-center">Update Payment Details</p><br>
+                        <?php } else { ?>
+                            <p class="h2 text-center">Add Payment Details</p><br>
+                        <?php } ?>
+                    </legend>
 
-input[type=submit] {
-  background-color: #4CAF50;
-  color: white;
-  width: 80px;
-  height: 60px;
-  padding: 12px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
-input[type=submit]:hover {
-  background-color: #45a049;
-}
+                    <?php $payment = $this->getPayments(); ?>
 
-.container {
-  border-radius: 2px;
-  background-color: #f2f2f2;
-  padding: 15px;
-}
-input[type=dropdown] select,textarea{
-  width: 10%;
-  padding: 0px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  box-sizing: border-box;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  resize: vertical;
-}
-</style>
-<div class="container" id="form">
-<form method="POST"  action="<?php  $this->geturl("save");?>" >
-  <link rel="stylesheet" type="text/css" href="<?php ?>">
-  
-  <h2><u>Payment Details</u></h2>
-    <div class = "form-group">
-      <label>Name:-</label><br>
-      <input type="text" name="payment[name]" align="center" value="<?php echo $payments->name; ?>" placeholder="payment Name" required="true"><br>
+                    <div class="row">
+
+                        <div class="form-group col-md-6">
+                            <label for="name">NAME</label>
+                            <input id="name" name="payment[name]" value="<?php echo $payment->name ?>" type="text" placeholder="NAME" class="validate form-control" require>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="code">CODE</label>
+                            <input id="code" name="payment[code]" value="<?php echo $payment->code ?>" type="text" placeholder="CODE" class="validate form-control">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="amount">AMOUNT</label>
+                            <input id="amount" name="payment[amount]" value="<?php echo $payment->amount ?>" type="text" placeholder="AMOUNT" class="validate form-control" require>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="description">DESCRIPTION</label>
+                            <textarea name="payment[description]" class="form-control" id="description" rows="3" placeholder="DESCRIPTION"><?php echo $payment->description ?></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <?php if ($payment->status) {
+                                $label = 'checked';
+                                $value = '1';
+                            } else {
+                                $label = '';
+                                $value = '0';
+                            }
+                            ?>
+                            <input type="checkbox" class="custom-control-input" id="status" <?php echo $label; ?> name='payment[status]'>
+                            <label class="custom-control-label" for="status">Status</label>
+                        </div>
+                    </div>
+
+
+                    <?php if (!$this->getRequest()->getGet('id')) { ?>
+
+                        <button class="btn btn-primary" type="submit" name="add">Add Payment
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    <?php } else { ?>
+                        <button class="btn btn-primary" type="submit" name="edit">Update Payment
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    <?php } ?>
+                    <button type="reset" class="btn btn-warning">Reset <i class="fa fa-undo"></i></button>
+                    <a class="btn btn-danger" href="<?php echo $this->getUrl()->getUrl('grid', null, null, true); ?>">Cancel <i class="fa fa-times"></i></a>
+                </fieldset>
+            </form>
+
+        </div>
     </div>
-    <div class = "form-group">
-      <label>Code:-</label><br>
-      <input type="text" name="payment[code]" value="<?php echo $payments->code; ?>" placeholder="payment code" required="true"><br>
-    </div>  
-
-     <div class = "form-group">
-      <label>Status:-</label> <br>
-      <select name="payment[status]"> 
-        <?php
-              foreach ($statusOption as $key => $value)
-          {
-                  echo "<option value='{$key}'";
-                  if($payments->status == $key){echo "selected"; 
-          
-            }
-                  echo ">{$value}</option>";
-              }
-          ?>
-      </select><br> 
-    </div>
-
-    <div class = "form-group">
-      <label>Description:-</label><br>
-      <input type="text" name="payment[description]" value="<?php echo $payments->description; ?>" placeholder="Description of payment" required="true"><br>
-    </div>  
-    
-   
-
-    <div class = "form-group">
-      <label>Created Date:-</label><br> 
-      <input type="datetime-local" name="payment[createdDate]" value="<?php echo $payments->createdDate; ?>" placeholder="Created Date Of payment" required="true"><br><br>
-    
-    </div>
-
-    <div class = "form-group">
-      <input type="submit" name="submit" class="button save" id="submit" value="Add">
-    </div>
-</form> 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<form action="<?php echo $this->getUrl('save'); ?>" method="post">
+
+    <?php $payment = $this->getPayment(); ?>
+    <div class="container">
+        <div class="card text-left">
+            <img class="card-img-top" src="holder.js/100px180/" alt="">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <?php if ($this->getController()->getRequest()->getGet('id')) : ?>
+                        <p class="h2 text-center">Update Payment Details</p><br>
+                    <?php else : ?>
+                        <p class="h2 text-center">Add Payment Details</p><br>
+                    <?php endif; ?>
+                </h4>
+                <p class="card-text">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input id="paymentname" name="payment[name]" value="<?php echo $payment->name ?>" type="text" class="validate">
+                                <label for="paymentname">Name</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="paymentname" name="payment[code]" value="<?php echo $payment->code ?>" type="text" class="validate">
+                                <label for="paymentname">Code</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <textarea id="desc" name="payment[description]" class="materialize-textarea"><?php echo $payment->description ?></textarea>
+                                <label for="desc">Description</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input id="paymentname" name="payment[amount]" value="<?php echo $payment->amount ?>" type="text" class="validate">
+                                <label for="paymentname">Amount</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <div class="switch">
+                                    <label>
+                                        Disabled
+                                        <?php if ($payment->status) {
+                                            $label = 'checked';
+                                        } else {
+                                            $label = '!checked';
+                                        }
+                                        ?>
+                                        <input name='payment[status]' type='checkbox' <?php echo $label; ?>>
+                                        <span class="lever"></span>
+                                        Enabled
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php if (!$this->getController()->getRequest()->getGet('id')) : ?>
+                            <button class="btn waves-effect waves-light" type="submit" name="add">Add Payment
+                                <i class="material-icons right">add</i>
+                            </button>
+                        <?php else : ?>
+                            <button class="btn waves-effect waves-light" type="submit" name="add">Update Payment
+                                <i class="material-icons right">edit</i>
+                            </button>
+                        <?php endif; ?>
+                        <button class="btn waves-effect waves-light" type="reset" name="cancel">Cancel
+                            <i class="material-icons right">close</i>
+                        </button>
+                    </div>
+                </div>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,90 +1,116 @@
-<?php
+<?php 
 
-  $media = $this->getMedia(); 
-
-?>
-
-<style type="text/css">
-  
- 
- .table-responsive
- {
-  background-color:#fafffb;
- }
- .button {
-  background-color: #4CAF50; 
-  border: none;
-  color: white;
-  padding: 15px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 10px;
-}
-.name-r1{
-    background-color: green;
-}
-
- .save {background-color: #008CBA;} 
-</style>
-<body>
-
- <div class="container">  
-  <div class="table-responsive">          
-  <table class="table">
-    <thead>
-      <tr></tr>
-      <tr>
-        <th>Image</th>
-        <th>Label</th>
-        <th>Small</th>
-        <th>Thumb</th>
-        <th>Base</th>
-        <th>Gallery</th>  
-        <th>Remove</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-          
-      <tr>
-          <td><input  type="Image" name="image" ></td>
-          <td><input id="lbl" type="text" name="Label"></td>
-          <td><input  type="radio" name="r1" value="small"></td>
-          <td><input  type="radio" name="r1" value="thumb" ></td>
-          <td><input  type="radio" name="r1" ></td>
-          <td><input class="ch1" type="checkbox" name="gallery"></td>
-          <td><input class="ch2" type="checkbox" name="remove" ></td>
-
-      </tr>
-      <tr>
-        <td><input type="file" name="image"></td>
-
-      </tr>
-    </tbody>
-  </table>
+$imageData = $this->getProductMedia();
 
 
-  </div>
-     <button class="button save" onclick="FileUpload()" >Upload</button> 
-  </div>
+ ?>
 
+<div class="container">
+    <div class="card text-left">
+        <div class="card-body">
+            <h4 class="card-title"></h4>
+            <form action="<?php echo $this->getUrl()->getUrl('check', 'media'); ?>" method="post">
+                <?php if ($this->getRequest()->getGet('id')) { ?>
+                    <fieldset>
+                        <legend>
+                            <p class="h2 text-center">Product Media Details</p><br>
+                        </legend>
+                        <div class="text-right">
+                            <button class="btn btn-info" type="submit" id="update" name="update">Update <i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger" type="submit" id="delete" name="delete">Delete <i class="fa fa-trash"></i></button>
+                        </div>
 
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Label</th>
+                                        <th>Small</th>
+                                        <th>Thumb</th>
+                                        <th>Base</th>
+                                        <th>Gallery</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $id = $this->getRequest()->getGet('id');
+                                    $imageData = $this->getProductMedia($id);
+                                    if (!$imageData) { ?>
+                                        <tr>
+                                            <td colspan="7">No Images Found</td>
+                                        </tr>
+                                        <?php } else { {
+                
+                                            foreach ($imageData->getData() as $key => $value) {
+                                        ?>
+                                                <tr id="txtData">
+                                                    <td><img src="./Skin/admin/images/<?php echo "{$id}/" . $value->path;?>" alt="" height="100px" width="100px"></td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" name="image[<?php echo $value->mediaId;?>][label]" placeholder="Label" id="inputDefault" value="<?php echo $value->label; ?>">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="small[<?php echo $value->mediaId; ?>]" value="<?php echo $value->mediaId; ?>" class="custom-control-input" name="image[small]" <?php echo $value->small ? "checked" : "" ?>>
+                                                            <label class="custom-control-label" for="small[<?php echo $value->mediaId; ?>]"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="thumb[<?php echo $value->mediaId; ?>]" value="<?php echo $value->mediaId; ?>" class="custom-control-input" name="image[thumb]" <?php echo $value->thumb ? "checked" : "" ?>>
+                                                            <label class="custom-control-label" for="thumb[<?php echo $value->mediaId; ?>]"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio" id="base[<?php echo $value->mediaId; ?>]" value="<?php echo $value->mediaId; ?>" class="custom-control-input" name="image[base]" <?php echo $value->base ? "checked" : "" ?>>
+                                                            <label class="custom-control-label" for="base[<?php echo $value->mediaId; ?>]"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="galary[<?php echo $value->mediaId; ?>]" name="image[<?php echo $value->mediaId; ?>][gallery]" <?php echo $value->gallery ? "checked" : "" ?>>
+                                                            <label class="custom-control-label" for="galary[<?php echo $value->mediaId; ?>]"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="remove[<?php echo $value->mediaId; ?>]" name="image[<?php echo $value->mediaId; ?>][remove]">
+                                                            <label class="custom-control-label" for="remove[<?php echo $value->mediaId; ?>]"></label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                    <?php
+                                            }
+                                        }
+                                    } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php } ?>
 
-<script type="text/javascript">
-  function FileUpload() {
-      event.preventDefault();
-      document.getElementById('form').action = '<?echo base_url().'http://localhost/Questecom/index.php?c=product&a=form&tab=media';?>';
-    document.getElementById('form').submit();
+                    <?php if (!$this->getRequest()->getGet('id')) { ?>
+                        <legend>
+                            <p class="h2 text-center">Product Id Not found</p><br>
+                        </legend>
+                    <?php } ?>
+            </form>
 
-  }
-  
-  
+            <form method="post" action="<?php echo $this->getUrl()->getUrl('save', 'media'); ?>" enctype="multipart/form-data">
+                <div class="row">
 
-</script>
-
-
-
+                    <div class="form-group col-md-10">
+                        <input type="file" class="form-control-file" id="uploadMedia" name="image">
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary btn-sm" type="submit" name="add">UPLOAD <i class="fa fa-upload"></i></button>
+                    </div>
+                </div>
+            </form>
+            </fieldset>
+        </div>
+    </div>
+</div>
